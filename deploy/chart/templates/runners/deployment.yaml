@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: runner
+  labels:
+    app: runner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: runner
+  template:
+    metadata:
+      labels:
+        app: runner
+    spec:
+      serviceAccountName: rpctest
+      containers:
+      - image: ghcr.io/trustless-engineering/rpctest/runner:latest
+        name: runner
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: runner-env

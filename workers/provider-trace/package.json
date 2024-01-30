@@ -1,0 +1,29 @@
+{
+  "name": "provider-trace",
+  "version": "1.0.0",
+  "description": "Traces the route to a given IP address and returns the hops",
+  "author": "Miles 'wedtm' Smith",
+  "license": "Closed",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "tsx src/entry.ts",
+    "build": "esbuild src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
+    "download": "tsx src/utils/download.mts"
+  },
+  "dependencies": {
+    "@maxmind/geoip2-node": "^4.2.0",
+    "nodejs-traceroute": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.125",
+    "aws-sdk": "^2.1474.0",
+    "serverless": "^3.35.2",
+    "serverless-aws-lambda": "^4.6.4",
+    "serverless-better-credentials": "^1.2.1",
+    "serverless-esbuild": "^1.48.5",
+    "serverless-offline": "^13.2.0",
+    "serverless-plugin-typescript": "^2.1.5",
+    "tsx": "^3.13.0",
+    "typescript": "^5.2.2"
+  }
+}

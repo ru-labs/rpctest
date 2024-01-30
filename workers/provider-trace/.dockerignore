@@ -1,0 +1,17 @@
+.dockerignore
+
+# Ignore node_modules directory
+node_modules
+
+# Ignore build output directory
+dist
+
+# Ignore editor files
+.vscode
+.idea
+
+# Ignore npm debug log
+npm-debug.log
+
+# Ignore serverless config file
+serverless.yml

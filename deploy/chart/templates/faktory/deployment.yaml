@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faktory-server
+  labels:
+    app: faktory-server
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: faktory-server
+  template:
+    metadata:
+      labels:
+        app: faktory-server
+    spec:
+      shareProcessNamespace: true
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: faktory-server-config-watcher
+        image: busybox
+        command:
+        - sh
+        - "-c"
+        - |
+          sum() {
+            current=$(find /conf -type f -exec md5sum {} \; | sort -k 2 | md5sum)
+          }
+          sum
+          last="$current"
+          while true; do
+            sum
+            if [ "$current" != "$last" ]; then
+              pid=$(pidof faktory)
+              echo "$(date -Iseconds) [conf.d] changes detected - signaling Faktory with pid=$pid"
+              kill -HUP "$pid"
+              last="$current"
+            fi
+            sleep 1
+          done
+        volumeMounts:
+        - name: faktory-server-configs-volume
+          mountPath: "/conf"
+      - image: contribsys/faktory:1.2.0
+        name: faktory-server
+        command:
+        - "/faktory"
+        - "-b"
+        - ":7419"
+        - "-w"
+        - ":7420"
+        - "-e"
+        - "production"
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: faktory-env
+        volumeMounts:
+        - name: faktory-server-configs-volume
+          mountPath: "/etc/faktory/conf.d"
+        - name: faktory-server-storage-volume
+          mountPath: "/var/lib/faktory/db"
+      volumes:
+      - name: faktory-server-configs-volume
+        configMap:
+          name: faktory-config
+      - name: faktory-server-storage-volume
+        persistentVolumeClaim:
+          claimName: faktory-server-storage-pv-claim

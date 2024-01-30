@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: runner-env
+data:
+  FAKTORY_PASSWORD: "faktory"
+  DATABASE_URL: "postgresql://gauntlet_user:pCzQDO2G7EhDvmeTeLvuGbS4yMSLqRFk@100.66.20.124:5432/sol_rpctest_dev?schema=public"
+  IPINFO_TOKEN: "34fa4dbfb19918"
+  OPENAI_API_KEY: "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"
+  MAXMIND_API_KEY: "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"
+  REDIS_URL: "redis://default:GJnJV5KZvQyG6ZD7Tzue6Xfu9FPO0yI7@186.233.184.89:36379"
+  SENTRY_AUTH_TOKEN: "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"
+  FAKTORY_URL: "tcp://faktory:faktory@faktory:7419"

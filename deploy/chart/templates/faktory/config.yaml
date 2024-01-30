@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: faktory-config
+data:
+  cron.toml: |2
+
+    [[cron]]
+    schedule = "*/1 * * * *"
+
+    [cron.job]
+    queue = "default"
+    reserve_for = 60
+    retry = -1
+    type = "Cron::SomeRandomCron"
+
+  throttles.toml: |2
+
+    [throttles.default]
+    concurrency = 1
+    timeout = 60

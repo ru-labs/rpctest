@@ -1,0 +1,28 @@
+org: trustless
+app: rpctest
+service: provider-trace
+frameworkVersion: '3'
+plugins:
+  - serverless-esbuild
+  - serverless-better-credentials
+  
+provider:
+  name: aws
+  runtime: nodejs18.x
+  versionFunctions: false
+  deploymentMethod: direct
+  
+  
+layers:
+  bins:
+    path: ./lib
+    name: ${sls:stage}-bins
+      
+functions:
+  tracer:
+    handler: src/index.default
+    timeout: 300
+    events:
+      - schedule: rate(5 minutes)
+    layers:
+      - { Ref: BinsLambdaLayer }

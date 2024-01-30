@@ -1,0 +1,17 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: rpctest
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: trustless-engineering/rpctest
+      # containerMode: kubernetes
+      # workVolumeClaimTemplate:
+      #   storageClassName: "microk8s-hostpath"
+      #   accessModes:
+      #   - ReadWriteOnce
+      #   resources:
+      #     requests:
+      #       storage: 10Gi

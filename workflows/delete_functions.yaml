@@ -1,0 +1,60 @@
+name: Destroy Serverless Functions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  destroy:
+    name: provider-trace
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        region:
+          - "us-east-1"
+          - "us-east-2"
+          - "us-west-1"
+          - "us-west-2"
+          - "af-south-1"
+          - "ap-east-1"
+          - "ap-south-2"
+          - "ap-southeast-3"
+          - "ap-southeast-4"
+          - "ap-south-1"
+          - "ap-northeast-3"
+          - "ap-northeast-2"
+          - "ap-southeast-1"
+          - "ap-southeast-2"
+          - "ap-northeast-1"
+          - "ca-central-1"
+          - "eu-central-1"
+          - "eu-west-1"
+          - "eu-west-2"
+          - "eu-south-1"
+          - "eu-west-3"
+          - "eu-south-2"
+          - "eu-north-1"
+          - "eu-central-2"
+          - "me-south-1"
+          - "me-central-1"
+          - "il-central-1"
+          - "sa-east-1"
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v2
+      with:
+        node-version: "18"
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+    - run: yarn install
+      working-directory: ./workers/provider-trace
+    - name: deploy
+      run: cd ./workers/provider-trace && yarn serverless remove --stage dev --verbose --region $REGION
+      env:
+        REGION: ${{ matrix.region }}
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SLS_ACCESS_KEY }}

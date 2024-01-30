@@ -1,0 +1,60 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RpcProvider {
+  id       String @id @default(cuid())
+  name     String
+  endpoint String
+  runs     Run[]
+}
+
+model Run {
+  id            String       @id @default(cuid())
+  requestIp     String       @db.Inet
+  start         DateTime
+  end           DateTime     @default(now())
+  providerIp    String       @db.Inet
+  rpcProviderId String
+  srcGeoDataId  String?      @unique
+  dstGeoDataId  String?      @unique
+  dstGeoData    IPGeoData?   @relation("DstGeoDataToRun", fields: [dstGeoDataId], references: [id])
+  rpcProvider   RpcProvider  @relation(fields: [rpcProviderId], references: [id])
+  srcGeoData    IPGeoData?   @relation("SrcGeoDataToRun", fields: [srcGeoDataId], references: [id])
+  results       TestResult[]
+}
+
+model IPGeoData {
+  id          String  @id @default(cuid())
+  ip          String  @db.Inet
+  city        String?
+  country     String?
+  countryCode String?
+  latitude    Float?
+  longitude   Float?
+  region      String?
+  regionCode  String?
+  timezone    String?
+  subdivision String?
+  anycast     Boolean @default(false)
+  dstRun      Run?    @relation("DstGeoDataToRun")
+  srcRun      Run?    @relation("SrcGeoDataToRun")
+}
+
+model TestResult {
+  id         String   @id @default(cuid())
+  runId      String
+  test       String
+  duration   Int
+  result     Json?
+  start      DateTime
+  successful Boolean
+  endpoint   String
+  run        Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+}
